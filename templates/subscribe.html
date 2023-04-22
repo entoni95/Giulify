@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Iscriviti{%endblock%}
+
+{% block content %}
+
+    <div class="col-md-9">
+
+        <div class="row">
+
+                    <div class="col-md-12">
+                        <h2 class="modal-title fs-5" id="exampleModalLabel">Iscriviti su Giulify</h2>
+                    </div>
+                    <form action="/new-user" method="post">
+                        <div class="modal-body">
+                            <input type="text" class="form-control" name="nickname" placeholder="Il tuo nickname" required/><br>
+                            <input type="password" class="form-control" name="password" placeholder="Inserisci una password" required/><br>
+                            <select class="form-control" name="ruolo" required>
+                                <option value="">Seleziona il ruolo</option>
+                                <option value="creatore">Creatore</option>
+                                <option value="ascoltatore">Ascoltatore</option>
+                            </select>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Registrati</button>
+                        </div>
+                        <br>
+                        <p><a href="/..">Indietro</a></p>
+                    </form>
+
+        </div>
+    </div>
+{% endblock %}

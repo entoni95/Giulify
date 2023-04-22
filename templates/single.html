@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% block title %}Ascolta Podcast{%endblock%}
+
+{% block content %}
+<div class="col-md-9">
+
+    <div class="row">
+        {% set podcast= {'id_creatore': 0} %}
+        {% for my_podcast in my_podcast %}
+        {% if podcast.update({'id_creatore': my_podcast.id_creatore}) %}{% endif %}
+        <div class="row articles">
+        <div class="col-md-3"><img style="width: 100%;" src="{{url_for('static', filename=my_podcast.immagine)}}"></div>
+        <div class="col-md-9">
+
+            <div class="d-flex flex-row">
+                <!-- quando è stretta sono colonne, quando è larga sono righe-->
+                <div class="p-2"><h2 class="tag_title"><a>{{ my_podcast.titolo_episodio |e}}</a></h2>
+                </div>
+            </div>
+            <p>{{ my_podcast.descr_episodio |e}}</p>
+            {% if session.name %}
+            <audio controls>
+                <source src="{{url_for('static', filename=my_podcast.file_audio)}}" type="audio/mp3">
+            </audio>
+            {% else %}
+            <p><b>Effettua il login o registrati per ascoltare l'episodio</b></p>
+            {% endif %}
+            <br><br>
+            <p><i>{{ my_podcast.titolo |e}} {{ my_podcast.descrizione |e}}<br>Episodio del {{ my_podcast.data |e}}</i></p><br>
+            {% if session.id ==  my_podcast.id_creatore%}
+            <a onclick="return confirm('Vuoi davvero eliminare questo episodio?');" href="/delete_episode/{{ my_podcast.id_episodio |e}}">Elimina episodio</a>
+            {% endif %}
+
+        </div>
+        </div>
+        {% endfor %}
+        <br>
+        <a href="../">Indietro</a>
+        <br><br>
+
+    </div>
+
+    <div class="row">
+    <div class="col-md-12" style="background-color: #fafafa">
+    <h2>Commenti</h2>
+        {% for comments in comments %}
+        <div class="col-md-9">
+
+            <div class="d-flex flex-row">
+                <div class="p-2"><img style="width: 30px" src="{{url_for('static', filename='comments.png') }}">
+                </div>
+                <div class="p-2">{{ comments.nickname |e}}
+                </div>
+
+                <div class="p-2 ms-auto">{{ comments.data_pubblicazione |e}}
+                </div>
+            </div>
+            <p>{{ comments.testo |e}}</p><br>
+            {% if session.id == comments.id_utente %}
+
+            <a onclick="return confirm('Vuoi davvero eliminare questo commento?');" href="/delete_comment/{{ comments.id_commento |e}}">Elimina commento</a>
+
+            {% endif %}
+        </div>
+        {% endfor %}
+        <br><br>
+        {% if session.name %}
+        <form action="/new-comment" method="post">
+            <input type="hidden" name="id_utente" value="{{ session['id'] |e}}" />
+            <input type="hidden" name="id_podcast" value="{{ id_podcast }}" />
+            <textarea minlength="5" maxlength="200" name="testo" placeholder="Aggiungi un commento" style="width: 100%; height: 200px"></textarea>
+            <br><br>
+            <input type="submit" value="Invia" class="btn btn-primary" />
+        </form>
+        {% endif %}
+    </div>
+
+    </div>
+
+    <br><br><br><br><br><br>
+</div>
+{% if session.id == podcast.id_creatore %}
+<a href="" data-bs-toggle="modal" data-bs-target="#podcastModal">
+    <div class="fixed-bottom">
+<span class="dot">+
+</span>
+    </div>
+</a>
+{%endif%}
+{% if podcast.id_creatore == 0 %}
+{% if session.ruolo == "creatore" %}
+<a href="" data-bs-toggle="modal" data-bs-target="#podcastModal">
+    <div class="fixed-bottom">
+<span class="dot">+
+</span>
+    </div>
+</a>
+{%endif%}
+{%endif%}
+<!-- Modal -->
+<div class="modal fade" id="podcastModal" tabindex="-1" aria-labelledby="postModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title fs-5" id="exampleModalLabel">Nuovo Episodio</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="/new-episode" method="post" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <input type="hidden" name="id_podcast" value="{{ id_podcast |e}}" />
+                    <label for="nickname">Username</label>
+                    <input class="form-control" type="text" id="nickname" name="nickname" value="{{ session['name'] |e}}" readonly />
+                    <br>
+                    <label for="nome_episodio">Nome dell'episodio</label>
+                    <input class="form-control" type="text" id="nome_episodio" name="nome_episodio" required/>
+                    <br>
+                    <label for="content">Descrizione</label>
+                    <textarea class="form-control" minlength="30" maxlength="200" id="content" name="content" required></textarea>
+                    <br>
+                    <label for="data_episodio">Data</label>
+                    <input class="form-control" type="date" id="data_episodio" name="data_episodio" required/><br>
+                    <label for="file_audio">Carica il tuo file mp3</label>
+                    <input class="form-control" type="file" id="file_audio" name="file_audio" accept="audio/mp3" required/>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
+                    <button type="submit" class="btn btn-primary">Crea</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

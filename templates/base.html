@@ -1,0 +1,98 @@
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <title>{% block title %}{% endblock %} - Giulify</title>
+    <link rel="icon" type="image/x-icon" href="{{url_for('static', filename='favicon.ico') }}">
+    <!-- start bootstrap -->
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.min.js" integrity="sha512-OvBgP9A2JBgiRad/mM36mkzXSXaJE9BEIENnVEmeZdITvwT09xnxLtT4twkCa8m/loMbPHsvPl0T8lRGVBwjlQ==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    </script>
+    <!-- end bootstrap -->
+    <!--grid system Max container width None (auto) 540px 720px 960px 1140px Class prefix .col- .col-sm- .col-md- .col-lg- .col-xl- # of columns12 -->
+    <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}" />
+    <script defer src="{{url_for('static', filename='app.js')}}"></script>
+</head>
+
+<body><nav class="navbar navbar-expand-lg navbar-light fixed-top" style="background: lightgreen">
+
+    <div class="container-fluid"> <a class="navbar-brand" href="{{url_for('index')}}"><h1><img style="width: 25%;" src="{{url_for('static', filename='giulify_logo.png') }}">Giulify</h1></a> <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#my_personal_menu" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+
+<span class="navbar-toggler-icon">
+</span> </button>
+
+        <div class="collapse navbar-collapse" id="my_personal_menu">
+            <ul class="navbar-nav ms-auto">
+                <!-- in bootstrap 5 ml-auto allinea a sx, ms-auto allinea a dx-->
+                <li class="nav-item"> <a class="nav-link {% block home %}{% endblock %}" href="{{url_for('index')}}">Home</a> </li>
+                {% if session.name %}
+                <li class="nav-item nav-link">Benvenuto {{ session["name"] |e}} (<small><a href="{{url_for('logout')}}">Logout</a></small>)</li>
+                {% else %}
+                <li class="nav-item nav-link"><button type="button" data-bs-toggle="modal" data-bs-target="#loginModal">Login</button></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div></nav>
+
+<div class="row">
+    <div class="row">
+
+        <div class="col-md-12">
+            <br>
+            <br>
+            <br>
+        </div>
+    </div>
+
+    <div class="row">
+
+        <div class="col-md-3">
+
+            <div class="d-sm-flex flex-sm-column d-flex flex-row">
+                <!-- quando è stretta sono colonne, quando è larga sono righe-->
+                <div class="p-3"><img style="width: 30px" src="{{url_for('static', filename='search.png') }}"> Cerca Podcast o Episodi</div>
+                <section>
+                        <input type="text" class="search form-control" />
+                </section>
+
+            </div>
+        </div>
+
+        {% block content %}{% endblock %}
+        <!-- Modal -->
+        <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title fs-5" id="exampleModalLabel">Login</h2>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form action="/login" method="post">
+                    <div class="modal-body">
+                        <input type="text" class="form-control" name="nickname" placeholder="Nickname" required/><br>
+                        <input type="password" class="form-control" name="password" placeholder="Password" required/><br>
+                        <select class="form-control" name="ruolo" required>
+                            <option value="creatore">Creatore</option>
+                            <option value="ascoltatore">Ascoltatore</option>
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
+                        <button type="submit" class="btn btn-primary">Autenticati</button>
+                    </div>
+                        <br>
+                        <p>Nuovo utente? <a href="/subscribe">Iscriviti</a></p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

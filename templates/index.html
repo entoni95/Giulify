@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}Home{%endblock%}
+{% block home %}active{%endblock%}
+
+{% block content %}
+<div class="col-md-9" xmlns="http://www.w3.org/1999/html">
+
+        <div class="row">
+            {%if session.id == -1%}
+            <div class="col-md-12" style="background-color: lightyellow">
+                <b>Attenzione:</b> nickname o password non corretti oppure hai inserito il ruolo sbagliato
+            </div>
+            {%endif%}
+            {%if session.id == -2%}
+            <div class="col-md-12" style="background-color: lightyellow">
+                <b>Attenzione:</b> si è verificato un errore durante la registrazione dell'untente. Può darsi che hai inserito un nickname già presente
+            </div>
+            {%endif%}
+            {% for podcast in podcast %}
+            <div class="row articles">
+            <div class="col-md-3"><img style="width: 100%;" src="{{url_for('static', filename=podcast.immagine) }}"></div>
+            <div class="col-md-9">
+                <div class="d-flex flex-row"
+                     {% if session.name ==  podcast.nickname%}
+                     style="background: lightyellow"
+                     {%endif%}
+                >
+                    <!-- quando è stretta sono colonne, quando è larga sono righe-->
+
+
+                    <div class="p-2"><h2 class="tag_title"><a>{{ podcast.titolo |e}}</a></h2>
+                    </div>
+
+                    <div class="p-2 ms-auto"><p>creato da: {{ podcast.nickname |e}}</p>
+                    </div>
+                </div>
+                <p>{{ podcast.descrizione |e}}</p><br>
+                <p><i>categoria: {{ podcast.categoria |e}}</i></p><br>
+                <a href="podcast/{{ podcast.id |e}}">Ascolta ora</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+    <br><br><br><br>
+    </div>
+{% if session.name %}
+{% if session.ruolo == "creatore" %}
+<a href="" data-bs-toggle="modal" data-bs-target="#podcastModal">
+    <div class="fixed-bottom">
+<span class="dot">+
+</span>
+    </div>
+</a>
+
+<!-- Modal -->
+<div class="modal fade" id="podcastModal" tabindex="-1" aria-labelledby="postModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title fs-5" id="exampleModalLabel">Nuovo Podcast</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="/new-podcast" method="post" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <input type="hidden" name="id_utente" value="{{ session['id'] |e}}" />
+                    <label for="nickname">Username</label>
+                    <input class="form-control" type="text" id="nickname" name="nickname" value="{{ session['name'] |e}}" readonly />
+                    <br>
+                    <label for="nome_podcast">Nome del Podcast</label>
+                    <input class="form-control" type="text" id="nome_podcast" name="nome_podcast" required/>
+                    <br>
+                    <label for="content">Descrizione</label>
+                    <textarea class="form-control" minlength="30" maxlength="200" id="content" name="content" required></textarea>
+                    <br>
+                    <label for="categoria">Categoria</label>
+                    <input class="form-control" type="text" id="categoria" name="categoria" required/><br>
+                    <label for="img_podcast">Aggiungi un'immagine</label>
+                    <input class="form-control" type="file" id="img_podcast" name="img_podcast" accept="image/*" required/>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
+                    <button type="submit" class="btn btn-primary">Crea</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{%endif%}
+{%endif%}
+{% endblock %}
